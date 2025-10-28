@@ -243,5 +243,4 @@ function setFilterItem({ column, operator, value }) {
     }
   }
 }
-
 </script>
