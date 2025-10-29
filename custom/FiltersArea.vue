@@ -77,8 +77,6 @@
 
           <CustomRangePicker
             v-else-if="['integer', 'decimal', 'float'].includes(c.type) && c.allowMinMaxQuery"
-            :min="getFilterMinValue(c.name)"
-            :max="getFilterMaxValue(c.name)"
             :valueStart="getFilterItem({ column: c, operator: 'gte' })"
             @update:valueStart="onFilterInput[c.name]({ column: c, operator: 'gte', value: ($event !== '' && $event !== null) ? $event : undefined })"
             :valueEnd="getFilterItem({ column: c, operator: 'lte' })"
@@ -105,21 +103,27 @@
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="isExpanded" class="flex w-full justify-end">
+      <template v-if="freeCells > 0" v-for="n in freeCells-1" :key="'free-cell-' + n">
+        <div></div>
+      </template>
+      <template v-if="freeCells === 0" v-for="n in cols-1" :key="'free-cell2-' + n">
+        <div></div>
+      </template>
+      <div class="flex items-end justify-end">
       <Button 
-        class="mt-4 max-w-24" 
+        class="mt-6 max-w-24" 
         @click="filtersStore.filters = [...filtersStore.filters.filter(f => filtersStore.shouldFilterBeHidden(f.field))]" 
         :disabled="filtersStore.filters.length === 0"  
       >
         Clear all
       </Button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, computed, ref, reactive } from 'vue';
+import { onMounted, onUnmounted, computed, ref, reactive, watch } from 'vue';
 import { useFiltersStore } from '@/stores/filters';
 import { callAdminForthApi, loadMoreForeignOptions, searchForeignOptions, createSearchInputHandlers } from '@/utils';
 import { useRouter } from 'vue-router';
@@ -136,7 +140,10 @@ const columnOffsets = reactive({});
 const columnEmptyResultsCount = reactive({});
 const filtersStore = useFiltersStore();
 const columnsMinMax = ref({});
-const isExpanded = ref(false);
+const isExpanded = ref(true);
+const freeCells = ref(0);
+const currentBreakpoint = ref("base");
+const cols = ref(1);
 
 const props = defineProps<{
     meta: any, 
@@ -146,37 +153,37 @@ const props = defineProps<{
 
 const columnOptions = ref({});
 const columnsWithFilter = computed(
-  () => props.resource.columns?.filter(column => column.showIn.filter && props.meta.options.columns.some(c => c.column === column.name)) || []
+  () => sortFilters(props.resource.columns?.filter(column => column.showIn.filter && props.meta.options.columns.some(c => c.column === column.name)), props.meta.options.columns) || []
 );
 
 onMounted(async () => {
-  console.log('FiltersArea mounted', props.resource);
-  columnsMinMax.value = await callAdminForthApi({
-    path: '/get_min_max_for_columns',
-    method: 'POST',
-    body: {
-      resourceId: route.params.resourceId
+  // columnsMinMax.value = await callAdminForthApi({
+  //   path: '/get_min_max_for_columns',
+  //   method: 'POST',
+  //   body: {
+  //     resourceId: route.params.resourceId
+  //   }
+  // });
+  currentBreakpoint.value = getBreakpoint(window.innerWidth);
+  calculateGridCols();
+  window.addEventListener('resize', () => {
+    const newBreakpoint = getBreakpoint(window.innerWidth)
+    if (newBreakpoint !== currentBreakpoint.value) {
+      currentBreakpoint.value = newBreakpoint;
+      calculateGridCols();
     }
-  });
-  console.log('Fetched columnsMinMax:', columnsMinMax.value);
+  })
 });
+
+onUnmounted(() => {
+  window.removeEventListener('resize', getBreakpoint)
+})
 
 function getFilterItem({ column, operator }) {
   const filterValue = filtersStore.filters.find(f => f.field === column.name && f.operator === operator)?.value;
   return filterValue !== undefined ? filterValue : '';
 }
 
-function getFilterMinValue(columnName) {
-  if(columnsMinMax.value && columnsMinMax.value[columnName]) {
-    return columnsMinMax.value[columnName]?.min
-  }
-}
-
-function getFilterMaxValue(columnName) {
-  if(columnsMinMax.value && columnsMinMax.value[columnName]) {
-    return columnsMinMax.value[columnName]?.max
-  }
-}
 async function loadMoreOptions(columnName, searchTerm = '') {
   return loadMoreForeignOptions({
     columnName,
@@ -242,6 +249,49 @@ function setFilterItem({ column, operator, value }) {
       filtersStore.setFilters([...filtersStore.filters.slice(0, index), { field: column.name, value, operator }, ...filtersStore.filters.slice(index + 1)])
     }
   }
+}
+
+
+function getBreakpoint(width) {
+  if (width >= 1536) return '2xl'
+  if (width >= 1280) return 'xl'
+  if (width >= 1024) return 'lg'
+  if (width >= 768) return 'md'
+  if (width >= 640) return 'sm'
+  return 'base'
+}
+
+function calculateGridCols() {
+  const size = currentBreakpoint.value;
+  switch (size) {
+    case '2xl':
+      cols.value = 6;
+      break;
+    case 'xl':
+      cols.value = 3;
+      break;
+    case 'lg':
+      cols.value = 2;
+      break;
+    case 'md':
+      cols.value = 1;
+      break;
+    default:
+      cols.value = 1;
+  }
+  const rows = Math.ceil(columnsWithFilter.value.length / cols.value);
+  freeCells.value = (cols.value * rows) - columnsWithFilter.value.length;
+}
+
+function sortFilters(array, fieldsObject) {
+  let desiredOrder = [];
+  fieldsObject.forEach(element => {
+    desiredOrder.push(element.column);
+  });
+  const sortedObjects = array.sort(
+    (a, b) => desiredOrder.indexOf(a.name) - desiredOrder.indexOf(b.name)
+  );
+  return sortedObjects;
 }
 
 </script>
