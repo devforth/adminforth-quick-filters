@@ -1,7 +1,7 @@
 import { AdminForthPlugin } from "adminforth";
 import type { IAdminForth, IHttpServer, AdminForthResourcePages, AdminForthResourceColumn, AdminForthDataTypes, AdminForthResource, AdminForthComponentDeclaration } from "adminforth";
 import type { PluginOptions } from './types.js';
-
+import { suggestIfTypo } from "adminforth";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
@@ -30,24 +30,19 @@ export default class  extends AdminForthPlugin {
   }
   
   validateConfigAfterDiscover(adminforth: IAdminForth, resourceConfig: AdminForthResource) {
-    // optional method where you can safely check field types after database discovery was performed
+    for ( const colOpt of this.options.columns ) {
+      const column = resourceConfig.columns.find(c => c.name === colOpt.column);
+      if ( !column ) {
+        const similar = suggestIfTypo(resourceConfig.columns.map((column: any) => column.name), colOpt.column);
+        throw new Error(`QuickFilters plugin: column '${colOpt.column}' not found in resource '${resourceConfig.resourceId}'. Did you mean '${similar}'?`);
+      }
+    }
   }
 
   instanceUniqueRepresentation(pluginOptions: any) : string {
     // optional method to return unique string representation of plugin instance. 
     // Needed if plugin can have multiple instances on one resource 
     return `single`;
-  }
-
-  setupEndpoints(server: IHttpServer) {
-    server.endpoint({
-      method: 'POST',
-      path: `/plugin/${this.pluginInstanceId}/example`,
-      handler: async ({ body }) => {
-        const { name } = body;
-        return { hey: `Hello ${name}` };
-      }
-    });
   }
 
 }
