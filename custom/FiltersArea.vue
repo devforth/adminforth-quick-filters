@@ -1,16 +1,19 @@
 <template>
   <div v-if="columnsWithFilter && columnsWithFilter.length > 0" class="flex flex-col w-full p-4 mb-4 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm dark:shadow-lg text-gray-900 dark:text-white">
-    <p 
-      class="hover:underline cursor-pointer text-blue-700 dark:text-blue-500 text-end"
-      @click="isExpanded = !isExpanded"
-    >
-      {{ isExpanded ? 'Hide filters' : 'Show filters' }}
-    </p>
+    <div class ="flex justify-end items-center">
+      <p 
+        class="hover:underline cursor-pointer text-blue-700 dark:text-blue-500 text-end"
+        @click="isExpanded = !isExpanded"
+      >
+        {{ isExpanded ? 'Hide filters' : 'Show filters' }}
+      </p>
+    </div>
     <div v-if="isExpanded" class="md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4 w-full">
       <div class="flex flex-col" v-for="c in columnsWithFilter" :key="c">
         <div class="min-w-48">
           <p class="dark:text-gray-400">{{ c.label }}</p>
           <Select
+            :teleportToBody="true"
             v-if="c.foreignResource"
             :multiple="c.filterOptions.multiselect"
             class="w-full"
@@ -33,6 +36,7 @@
             </template>
           </Select>
           <Select
+            :teleportToBody="true"
             :multiple="c.filterOptions.multiselect"
             class="w-full"
             v-else-if="c.type === 'boolean'"
@@ -49,6 +53,7 @@
           />
           
           <Select
+            :teleportToBody="true"
             :multiple="c.filterOptions.multiselect"
             class="w-full"
             v-else-if="c.enum"
