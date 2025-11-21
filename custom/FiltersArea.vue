@@ -8,10 +8,10 @@
         {{ isExpanded ? 'Hide filters' : 'Show filters' }}
       </p>
     </div>
-    <div v-if="isExpanded" class="md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4 w-full">
+    <div v-if="isExpanded" class="md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2 w-full">
       <div class="flex flex-col" v-for="c in columnsWithFilter" :key="c">
         <div class="min-w-48">
-          <p class="dark:text-gray-400">{{ c.label }}</p>
+          <p class="dark:text-gray-400 text-sm">{{ c.label }}</p>
           <Select
             :teleportToBody="true"
             v-if="c.foreignResource"
@@ -27,6 +27,7 @@
             }"
             @update:modelValue="onFilterInput[c.name]({ column: c, operator: c.filterOptions.multiselect ? 'in' : 'eq', value: c.filterOptions.multiselect ? ($event.length ? $event : undefined) : $event || undefined })"
             :modelValue="filtersStore.filters.find(f => f.field === c.name && f.operator === (c.filterOptions.multiselect ? 'in' : 'eq'))?.value || (c.filterOptions.multiselect ? [] : '')"
+            :teleportToTop="true"
           >
             <template #extra-item v-if="columnLoadingState[c.name]?.loading">
               <div class="text-center text-gray-400 dark:text-gray-300 py-2 flex items-center justify-center gap-2">
@@ -50,6 +51,7 @@
             :modelValue="filtersStore.filters.find(f => f.field === c.name && f.operator === (c.filterOptions.multiselect ? 'in' : 'eq'))?.value !== undefined
               ? filtersStore.filters.find(f => f.field === c.name && f.operator === (c.filterOptions.multiselect ? 'in' : 'eq'))?.value
               : (c.filterOptions.multiselect ? [] : '')"
+            :teleportToTop="true"
           />
           
           <Select
@@ -60,6 +62,7 @@
             :options="c.enum"
             @update:modelValue="onFilterInput[c.name]({ column: c, operator: c.filterOptions.multiselect ? 'in' : 'eq', value: c.filterOptions.multiselect ? ($event.length ? $event : undefined) : $event || undefined })"
             :modelValue="filtersStore.filters.find(f => f.field === c.name && f.operator === (c.filterOptions.multiselect ? 'in' : 'eq'))?.value || (c.filterOptions.multiselect ? [] : '')"
+            :teleportToTop="true"
           />
 
           <Input
