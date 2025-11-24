@@ -11,7 +11,7 @@
     <div v-if="isExpanded" class="md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2 w-full">
       <div class="flex flex-col" v-for="c in columnsWithFilter" :key="c">
         <div class="min-w-48">
-          <p class="dark:text-gray-400 text-sm">{{ c.label }}</p>
+          <p class="dark:text-gray-400 font-medium text-sm">{{ c.label }}</p>
           <Select
             :teleportToBody="true"
             v-if="c.foreignResource"
