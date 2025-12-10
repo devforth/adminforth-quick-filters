@@ -5,7 +5,7 @@ import { suggestIfTypo } from "adminforth";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
-
+  
   constructor(options: PluginOptions) {
     super(options, import.meta.url);
     this.options = options;
