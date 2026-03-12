@@ -1,7 +1,8 @@
 import { AdminForthPlugin } from "adminforth";
-import type { IAdminForth, IHttpServer, AdminForthResourcePages, AdminForthResourceColumn, AdminForthDataTypes, AdminForthResource, AdminForthComponentDeclaration } from "adminforth";
+import type { IAdminForth, AdminForthResource, AdminForthComponentDeclaration } from "adminforth";
+import { AdminForthFilterOperators } from "adminforth";
 import type { PluginOptions } from './types.js';
-import { suggestIfTypo } from "adminforth";
+import { FilterParams } from "../../adminforth/adminforth/dist/index.js";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
@@ -14,6 +15,20 @@ export default class  extends AdminForthPlugin {
   async modifyResourceConfig(adminforth: IAdminForth, resourceConfig: AdminForthResource) {
     super.modifyResourceConfig(adminforth, resourceConfig);
   
+    const frontendOptions = this.options.filters.map(f => {
+      if (!f.enum && !f.searchInput) {
+        throw new Error(`Filter ${f.name} should have either enum or searchInput property`);
+      }
+      if (f.enum && f.searchInput) {
+        throw new Error(`Filter ${f.name} should not have both enum and searchInput properties, choose one of them`);
+      }
+      return {
+        name: f.name,
+        icon: f.icon,
+        enum: f.enum ? f.enum.map(e => ({ label: e.label, icon: e.icon })) : undefined,
+        hasSearchInput: !!f.searchInput,
+      };
+    });
     // simply modify resourceConfig or adminforth.config. You can get access to plugin options via this.options;
     if ( !resourceConfig.options.pageInjections ) {
       resourceConfig.options.pageInjections = {};
@@ -21,22 +36,59 @@ export default class  extends AdminForthPlugin {
     if ( !resourceConfig.options.pageInjections.list ) {
       resourceConfig.options.pageInjections.list = {};
     }
-    if ( !resourceConfig.options.pageInjections.list.afterBreadcrumbs ) {
-      resourceConfig.options.pageInjections.list.afterBreadcrumbs = [];
+    if ( !resourceConfig.options.pageInjections.list.beforeActionButtons ) {
+      resourceConfig.options.pageInjections.list.beforeActionButtons = [];
     }
-    (resourceConfig.options.pageInjections.list.afterBreadcrumbs as AdminForthComponentDeclaration[]).push(
-      { file: this.componentPath('FiltersArea.vue'), meta: { pluginInstanceId: this.pluginInstanceId, resourceId: this.resourceConfig.resourceId, options: this.options } }
+    (resourceConfig.options.pageInjections.list.beforeActionButtons as AdminForthComponentDeclaration[]).push(
+      { 
+        file: this.componentPath('FiltersArea.vue'), 
+        meta: {
+          pluginInstanceId: this.pluginInstanceId, 
+          resourceId: this.resourceConfig.resourceId, 
+          options: frontendOptions
+        } 
+      }
     );
+
+    const normalizeFilterValue = (filters: FilterParams[]) => {
+      const filtersToReturn = [];
+      for (const filter of filters) {
+        if (filter.field.startsWith('_universal_search_')) {
+          const searchTerm = filter.value as string;
+          if (!searchTerm) continue;
+          const searchFieldName = filter.field.replace('_universal_search_', '');
+          const filterFromSearch = this.options.filters.find(f => f.name === searchFieldName)?.searchInput?.(searchTerm) || { field: searchFieldName, operator: AdminForthFilterOperators.EQ, value: searchTerm }; 
+          filtersToReturn.push(filterFromSearch);
+        } else if (filter.field.startsWith('_qf_')) {
+
+        } else {
+          filtersToReturn.push(filter);
+        }
+      }
+      return filtersToReturn;
+    } 
+    
+    const transformer = async ({ query }: { query: any }) => {
+      const normalizedFilters = normalizeFilterValue(query.filters);
+      query.filters = normalizedFilters;
+      console.log('Transformed filters', query.filters);
+      return { ok: true, error: '' };
+    };
+
+    const originalBefore = this.resourceConfig.hooks.list.beforeDatasourceRequest;
+
+    if (!originalBefore) {
+      this.resourceConfig.hooks.list.beforeDatasourceRequest = [transformer];
+    } else if (Array.isArray(originalBefore)) {
+      originalBefore.push(transformer);
+      this.resourceConfig.hooks.list.beforeDatasourceRequest = originalBefore;
+    } else {
+      this.resourceConfig.hooks.list.beforeDatasourceRequest = [originalBefore, transformer];
+    }
   }
   
   validateConfigAfterDiscover(adminforth: IAdminForth, resourceConfig: AdminForthResource) {
-    for ( const colOpt of this.options.columns ) {
-      const column = resourceConfig.columns.find(c => c.name === colOpt.column);
-      if ( !column ) {
-        const similar = suggestIfTypo(resourceConfig.columns.map((column: any) => column.name), colOpt.column);
-        throw new Error(`QuickFilters plugin: column '${colOpt.column}' not found in resource '${resourceConfig.resourceId}'. Did you mean '${similar}'?`);
-      }
-    }
+
   }
 
   instanceUniqueRepresentation(pluginOptions: any) : string {
