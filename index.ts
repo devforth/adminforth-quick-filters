@@ -2,7 +2,6 @@ import { AdminForthPlugin } from "adminforth";
 import type { IAdminForth, AdminForthResource, AdminForthComponentDeclaration } from "adminforth";
 import { AdminForthFilterOperators } from "adminforth";
 import type { PluginOptions } from './types.js';
-import type { FilterParams } from "@/types/Common";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
@@ -50,7 +49,7 @@ export default class  extends AdminForthPlugin {
       }
     );
 
-    const normalizeFilterValue = (filters: FilterParams[]) => {
+    const normalizeFilterValue = (filters: any[]) => {
       const filtersToReturn = [];
       for (const filter of filters) {
         if (filter.field.startsWith('_universal_search_')) {
