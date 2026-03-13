@@ -2,7 +2,7 @@ import { AdminForthPlugin } from "adminforth";
 import type { IAdminForth, AdminForthResource, AdminForthComponentDeclaration } from "adminforth";
 import { AdminForthFilterOperators } from "adminforth";
 import type { PluginOptions } from './types.js';
-import { FilterParams } from "../../adminforth/adminforth/dist/index.js";
+import type { FilterParams } from "@/types/Common";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
