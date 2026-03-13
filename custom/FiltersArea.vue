@@ -11,6 +11,7 @@
 
       <div v-else>
         <QickFiltersSelect 
+          :filter="filter"
         />
       </div>
     </div>
@@ -21,20 +22,13 @@
 <script lang="ts" setup>
 import UniversalSearchInput from './UniversalSearchInput.vue';
 import QickFiltersSelect from './QickFiltersSelect.vue';
-import { Select } from '@/afcl'
-
-
+import type { Filter } from './types';
 
 const props = defineProps<{
     meta: {
       pluginInstanceId: string,
       resourceId: string,
-      options: {
-        name: string,
-        icon?: string,
-        enum?: { label: string, icon?: string }[],
-        hasSearchInput?: boolean
-      }
+      options: Filter[]
     }, 
     resource: any,
     adminUser: any

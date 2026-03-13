@@ -60,7 +60,14 @@ export default class  extends AdminForthPlugin {
           const filterFromSearch = this.options.filters.find(f => f.name === searchFieldName)?.searchInput?.(searchTerm) || { field: searchFieldName, operator: AdminForthFilterOperators.EQ, value: searchTerm }; 
           filtersToReturn.push(filterFromSearch);
         } else if (filter.field.startsWith('_qf_')) {
-
+          const quickFilter = this.options.filters.find(f => `_qf_${f.name}` === filter.field);
+          if (quickFilter?.enum) {
+            const enumOption = quickFilter.enum.find(e => e.label === filter.value);
+            if (enumOption) {
+              const filterFromEnum = enumOption.filters();
+              filtersToReturn.push(filterFromEnum);
+            }
+          }
         } else {
           filtersToReturn.push(filter);
         }
