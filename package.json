@@ -20,8 +20,8 @@
     "semantic-release-slack-bot": "^4.0.2",
     "typescript": "^5.7.3"
   },
-  "dependencies": {
-    "adminforth": "^2.4.0-next.254"
+  "peerDependencies": {
+    "adminforth": "^2.24.0"
   },
   "release": {
     "plugins": [
@@ -32,6 +32,7 @@
       [
         "semantic-release-slack-bot",
         {
+          "packageName": "@adminforth/quick-filters",
           "notifyOnSuccess": true,
           "notifyOnFail": true,
           "slackIcon": ":package:",

@@ -6,7 +6,7 @@ import { FilterParams } from "../../adminforth/adminforth/dist/index.js";
 
 export default class  extends AdminForthPlugin {
   options: PluginOptions;
-
+  
   constructor(options: PluginOptions) {
     super(options, import.meta.url);
     this.options = options;
@@ -101,7 +101,7 @@ export default class  extends AdminForthPlugin {
   instanceUniqueRepresentation(pluginOptions: any) : string {
     // optional method to return unique string representation of plugin instance. 
     // Needed if plugin can have multiple instances on one resource 
-    return `single`;
+    return `${this.resourceConfig.resourceId}-quick-filters`;
   }
 
 }
