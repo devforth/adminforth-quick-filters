@@ -77,7 +77,6 @@ export default class  extends AdminForthPlugin {
     const transformer = async ({ query }: { query: any }) => {
       const normalizedFilters = normalizeFilterValue(query.filters);
       query.filters = normalizedFilters;
-      console.log('Transformed filters', query.filters);
       return { ok: true, error: '' };
     };
 

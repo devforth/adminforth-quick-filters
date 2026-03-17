@@ -1,6 +1,6 @@
 <template>
   <Select
-    class="w-full"
+    class="w-full text-sm"
     :options="selectOptions"
     v-model="selected"
     classesForInput="py-[4px] !text-sm bg-white rounded"
