@@ -3,7 +3,7 @@
     class="w-full text-sm"
     :options="selectOptions"
     v-model="selected"
-    classesForInput="py-[4px] !text-sm bg-white rounded"
+    classesForInput="py-[6px] !text-sm bg-white rounded"
     teleportToBody
   ></Select>
 </template>
