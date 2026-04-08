@@ -1,4 +1,4 @@
-import { Filters, type IAdminForthSingleFilter, type IAdminForthAndOrFilter } from "adminforth"
+import { Filters, type IAdminForthSingleFilter, type IAdminForthAndOrFilter, type PluginsCommonOptions } from "adminforth"
 interface IFilter {
     name: string;
     icon?: string;
@@ -9,6 +9,6 @@ interface IFilter {
     }[]; 
     searchInput?: (searchVal: string) =>  IAdminForthSingleFilter | IAdminForthAndOrFilter | Promise<IAdminForthSingleFilter | IAdminForthAndOrFilter>;
 }
-export interface PluginOptions {
+export interface PluginOptions extends PluginsCommonOptions {
     filters: IFilter[]
 }
