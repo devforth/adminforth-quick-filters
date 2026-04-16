@@ -51,14 +51,15 @@ export default class  extends AdminForthPlugin {
 
     const normalizeFilterValue = (filters: any[]) => {
       const filtersToReturn = [];
-      for (const filter of filters) {
-        if (filter.field.startsWith('_universal_search_')) {
+      const normalizedFilters = Array.isArray(filters) ? filters : [];
+      for (const filter of normalizedFilters) {
+        if (filter.field?.startsWith('_universal_search_')) {
           const searchTerm = filter.value as string;
           if (!searchTerm) continue;
           const searchFieldName = filter.field.replace('_universal_search_', '');
           const filterFromSearch = this.options.filters.find(f => f.name === searchFieldName)?.searchInput?.(searchTerm) || { field: searchFieldName, operator: AdminForthFilterOperators.EQ, value: searchTerm }; 
           filtersToReturn.push(filterFromSearch);
-        } else if (filter.field.startsWith('_qf_')) {
+        } else if (filter.field?.startsWith('_qf_')) {
           const quickFilter = this.options.filters.find(f => `_qf_${f.name}` === filter.field);
           if (quickFilter?.enum) {
             const enumOption = quickFilter.enum.find(e => e.label === filter.value);
