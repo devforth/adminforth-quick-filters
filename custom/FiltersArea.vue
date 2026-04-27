@@ -4,7 +4,7 @@
       <UniversalSearchInput 
         v-if="filter.hasSearchInput" 
         :meta="{ 
-          placeholder: `Search ${filter.name}`, 
+          placeholder: `${filter.name}`, 
           filterField: filter.name 
         }" 
       />

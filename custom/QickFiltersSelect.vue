@@ -1,18 +1,18 @@
 <template>
-  <Select
+  <FilterDropdown
     class="w-full text-sm"
-    :options="selectOptions"
+    :filter="filter"   :options="selectOptions"
     v-model="selected"
     classesForInput="py-[6px] !text-sm bg-white rounded"
     teleportToBody
-  ></Select>
+  ></FilterDropdown>
 </template>
 
 
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { Select } from '@/afcl'
+import { FilterDropdown } from '@/afcl'
 import type { Filter } from './types';
 import { useAdminforth } from '@/adminforth';
 import { AdminForthFilterOperators } from '@/types/Common';
