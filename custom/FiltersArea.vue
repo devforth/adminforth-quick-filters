@@ -4,12 +4,12 @@
       <UniversalSearchInput 
         v-if="filter.hasSearchInput" 
         :meta="{ 
-          placeholder: `Search ${filter.name}`, 
+          placeholder: `${filter.name}`, 
           filterField: filter.name 
         }" 
       />
 
-      <div class="w-64" v-else>
+      <div v-else>
         <QickFiltersSelect 
           :filter="filter"
         />
