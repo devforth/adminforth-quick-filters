@@ -1,7 +1,8 @@
 <template>
   <FilterDropdown
     class="text-sm"
-    :filter="filter"   :options="selectOptions"
+    :filter="filter as { name: string; enum: any[] }"  
+    :options="selectOptions"
     v-model="selected"
     teleportToBody
   ></FilterDropdown>
@@ -11,7 +12,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { FilterDropdown } from '@/afcl'
+import FilterDropdown from './FilterDropdown.vue'
 import type { Filter } from './types';
 import { useAdminforth } from '@/adminforth';
 import { AdminForthFilterOperators } from '@/types/Common';
