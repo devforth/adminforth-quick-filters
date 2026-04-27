@@ -1,9 +1,8 @@
 <template>
   <FilterDropdown
-    class="w-full text-sm"
+    class="text-sm"
     :filter="filter"   :options="selectOptions"
     v-model="selected"
-    classesForInput="py-[6px] !text-sm bg-white rounded"
     teleportToBody
   ></FilterDropdown>
 </template>

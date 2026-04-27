@@ -9,7 +9,7 @@
         }" 
       />
 
-      <div class="w-64" v-else>
+      <div v-else>
         <QickFiltersSelect 
           :filter="filter"
         />
