@@ -8,7 +8,7 @@
         type="button" 
         @click="dropdownClick" 
         class="af-filter-dropdown-button group h-[34px] inline-flex items-center justify-between min-w-max px-3 py-2 text-left cursor-pointer 
-        text-sm font-medium transition-all rounded border outline-none gap-x-2
+        text-sm font-medium transition-all border outline-none gap-x-2
         bg-lightListViewButtonBackground text-lightListViewButtonText border-lightListViewButtonBorder  
         dark:bg-darkListViewButtonBackground dark:text-darkListViewButtonText dark:border-darkListViewButtonBorder 
         hover:bg-lightListViewButtonBackgroundHover hover:text-lightListViewButtonTextHover rounded-default"
