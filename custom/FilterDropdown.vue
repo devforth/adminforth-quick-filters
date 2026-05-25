@@ -1,5 +1,5 @@
 <template>
-  <div class="afcl-select afcl-select-wrapper relative inline-block af-button-shadow rounded rounded-default" ref="internalSelect" 
+  <div class="afcl-select afcl-select-wrapper relative inline-block af-button-shadow rounded-default" ref="internalSelect" 
     :class="{'opacity-50': readonly}"
   >
     <div class="relative w-fit">
