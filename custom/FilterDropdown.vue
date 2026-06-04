@@ -11,6 +11,7 @@
         text-sm font-medium transition-all border outline-none gap-x-2
         bg-lightListViewButtonBackground text-lightListViewButtonText border-lightListViewButtonBorder  
         dark:bg-darkListViewButtonBackground dark:text-darkListViewButtonText dark:border-darkListViewButtonBorder 
+        dark:hover:text-darkListViewButtonTextHover dark:hover:bg-darkListViewButtonBackgroundHover rounded-default
         hover:bg-lightListViewButtonBackgroundHover hover:text-lightListViewButtonTextHover rounded-default"
       >
         <span v-if="displayLabel" class="whitespace-nowrap">
