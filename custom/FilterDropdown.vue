@@ -24,7 +24,7 @@
           {{ filter?.name || placeholder || $t('Select...') }}
         </span>
 
-        <IconCaretDownSolid class="h-4 w-4 text-lightPrimary dark:text-darkPrimary opacity-50 transition duration-150 ease-in flex-shrink-0"
+        <IconCaretDownSolid class="h-4 w-4 text-lightPrimary dark:text-darkPrimary  transition duration-150 ease-in flex-shrink-0 brightness-150"
           :class="{ 'transform rotate-180': showDropdown }"
         />
       </button>
