@@ -1,21 +1,24 @@
 <template>
   <div class="af-universal-search flex items-center gap-1">
     <slot name="prefix" />
-      <div class="relative w-64">
-        <input
+      <!-- enter is handled on the wrapper so it fires once: Input spreads attrs on both its root and the input -->
+      <div class="w-64" @keyup.enter="applyImmediate">
+        <Input
           v-model="localValue"
           type="text"
+          fullWidth
           :placeholder="props.meta?.placeholder ?? ''"
-          class="w-full border rounded text-sm dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white px-2 py-1.5 pr-6"
-          @keyup.enter="applyImmediate"
         >
-        <p
-          v-if="localValue"
-          @click="clear"
-          class="absolute right-2 top-1/2 -translate-y-1/2 hover:cursor-pointer hover:text-gray-600 dark:text-white dark:hover:text-gray-400  "
-        >
-          ✕
-        </p>
+          <template #rightIcon>
+            <p
+              v-if="localValue"
+              @click="clear"
+              class="hover:cursor-pointer hover:text-gray-600 dark:text-white dark:hover:text-gray-400"
+            >
+              ✕
+            </p>
+          </template>
+        </Input>
       </div>
     <slot name="suffix" />
   </div>
@@ -23,6 +26,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import adminforth from '@/adminforth';
+import { Input } from '@/afcl';
 import { AdminForthFilterOperators } from '@/types/Common';
 import { useRoute } from 'vue-router';
 
