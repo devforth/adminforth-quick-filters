@@ -10,13 +10,11 @@
           :placeholder="props.meta?.placeholder ?? ''"
         >
           <template #rightIcon>
-            <p
+            <IconX
               v-if="localValue"
               @click="clear"
-              class="hover:cursor-pointer hover:text-gray-600 dark:text-white dark:hover:text-gray-400"
-            >
-              ✕
-            </p>
+              class="w-4 h-4 cursor-pointer text-lightInputIconColor hover:text-lightInputText dark:text-darkInputIconColor dark:hover:text-darkInputText transition-colors"
+            />
           </template>
         </Input>
       </div>
@@ -24,13 +22,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import adminforth from '@/adminforth';
 import { Input } from '@/afcl';
+import { IconX } from '@iconify-prerendered/vue-lucide';
 import { AdminForthFilterOperators } from '@/types/Common';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
+import { useFiltersStore } from '@/stores/filters';
 
 const props = defineProps<{ 
   meta?: {
@@ -39,29 +36,24 @@ const props = defineProps<{
     filterField: string,
   }; 
 }>();
-const localValue = ref('');
+const filtersStore = useFiltersStore();
+const field = `_universal_search_${props.meta?.filterField}`;
+const appliedTerm = computed(() => filtersStore.filters.find(f => f.field === field)?.value ?? '');
+const localValue = ref(appliedTerm.value);
 let t: any = null;
 let blockFilterUpdate = false;
 
-onMounted(() => {
-  const filters = Object.keys(route.query).filter(k => k.startsWith('filter__')).map(k => {
-    const [_, field, operator] = k.split('__');
-    return {
-      field,
-      operator,
-      value: JSON.parse(decodeURIComponent(route.query[k] as string))
-    }
-  });
-  const isUniversalSearchFilterApplied = filters.find(f => f.field === `_universal_search_${props.meta?.filterField}`);
-  if (isUniversalSearchFilterApplied) {
-    localValue.value = isUniversalSearchFilterApplied.value;
+// follow filter changes made outside of the input: restore from the URL, "clear filters"
+watch(appliedTerm, (term) => {
+  if (term !== localValue.value.trim()) {
     blockFilterUpdate = true;
-  };
+    localValue.value = term;
+  }
 });
 
 function send(term?: string) {
   adminforth?.list?.updateFilter?.({
-    field: `_universal_search_${props.meta?.filterField}`,
+    field,
     operator: AdminForthFilterOperators.EQ,
     value: term || '',
   });

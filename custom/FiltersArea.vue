@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap gap-1">
+  <div class="flex flex-wrap items-center gap-2 gap-y-1">
     <template v-for="filter in meta.options" :key="filter.name" >
       <UniversalSearchInput 
         v-if="filter.hasSearchInput" 
@@ -9,11 +9,10 @@
         }" 
       />
 
-      <div v-else>
-        <QickFiltersSelect 
-          :filter="filter"
-        />
-      </div>
+      <QickFiltersSelect
+        v-else
+        :filter="filter"
+      />
     </template>
   </div>
 
