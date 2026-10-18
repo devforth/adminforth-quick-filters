@@ -42,7 +42,8 @@ export default class  extends AdminForthPlugin {
       { 
         file: this.componentPath('FiltersArea.vue'), 
         meta: {
-          pluginInstanceId: this.pluginInstanceId, 
+          thinEnoughToShrinkTable: true,
+          pluginInstanceId: this.pluginInstanceId,
           resourceId: this.resourceConfig.resourceId, 
           options: frontendOptions
         } 
