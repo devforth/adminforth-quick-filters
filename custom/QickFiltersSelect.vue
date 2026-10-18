@@ -1,6 +1,6 @@
 <template>
   <Select
-    class="w-48"
+    class="w-full @4xl/header:w-48"
     classesForInput="af-filter-dropdown-button"
     :options="selectOptions"
     :placeholder="filter.name"

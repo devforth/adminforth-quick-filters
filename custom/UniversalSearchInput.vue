@@ -1,8 +1,8 @@
 <template>
-  <div class="af-universal-search flex items-center gap-1">
+  <div class="af-universal-search flex w-full items-center gap-1 @4xl/header:w-auto">
     <slot name="prefix" />
       <!-- enter is handled on the wrapper so it fires once: Input spreads attrs on both its root and the input -->
-      <div class="w-64" @keyup.enter="applyImmediate">
+      <div class="min-w-0 flex-1 @4xl/header:w-64 @4xl/header:flex-none" @keyup.enter="applyImmediate">
         <Input
           v-model="localValue"
           type="text"
