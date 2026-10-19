@@ -34,8 +34,8 @@ const selectOptions = props.filter.enum!.map(option => ({
 // the filters store is the source of truth: it is restored from the URL and emptied by "clear filters"
 const selected = computed({
   get: () => filtersStore.filters.find(f => f.field === field)?.value ?? null,
-  // Select emits undefined when the picked option is clicked again, updateFilter then removes the filter
-  set: (value) => list.updateFilter({
+  // Select emits undefined when the picked option is clicked again, setFilter then removes the filter
+  set: (value) => list.setFilter({
     field,
     operator: AdminForthFilterOperators.EQ,
     value,
